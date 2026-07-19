@@ -1,4 +1,5 @@
 import 'package:aayapath/core/routes/app_routes.dart';
+import 'package:aayapath/core/storage/app_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -16,11 +17,15 @@ class _SplashPageState extends State<SplashPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Future.delayed(Duration(milliseconds: 800), () {
-        if (mounted) {
-          context.goNamed(AppRouteName.onboarding);
-        }
+        _resolveStartRoute();
       });
     });
+  }
+
+  Future<void> _resolveStartRoute() async {
+    final completed = await AppPreferences().hasCompletedOnboarding();
+    if (!mounted) return;
+    context.goNamed(completed ? AppRouteName.home : AppRouteName.onboarding);
   }
 
   @override

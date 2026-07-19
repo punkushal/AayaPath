@@ -1,4 +1,5 @@
 import 'package:aayapath/core/extension/responsive_extension.dart';
+import 'package:aayapath/core/routes/app_routes.dart';
 import 'package:aayapath/core/theme/app_colors.dart';
 import 'package:aayapath/core/theme/app_typograhpy.dart';
 import 'package:aayapath/core/utils/number_formatter.dart';
@@ -8,6 +9,7 @@ import 'package:aayapath/features/entry/presentation/widgets/steps/income_step.d
 import 'package:aayapath/shared/presentation/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 const _genderLabels = {
   OnboardingGender.male: 'Male',
@@ -113,7 +115,10 @@ class FinalizeStep extends StatelessWidget {
                       AppButton(
                         label: 'Complete Setup',
                         isLoading: isSubmitting,
-                        onPressed: () => bloc.add(const OnboardingSubmitted()),
+                        onPressed: () {
+                          bloc.add(const OnboardingSubmitted());
+                          context.goNamed(AppRouteName.home);
+                        },
                       ),
                   ],
                 ),

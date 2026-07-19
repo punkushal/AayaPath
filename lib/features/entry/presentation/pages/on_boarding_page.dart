@@ -1,8 +1,7 @@
 import 'package:aayapath/core/extension/responsive_extension.dart';
+import 'package:aayapath/core/storage/app_preferences.dart';
 import 'package:aayapath/features/entry/presentation/bloc/onboarding_bloc.dart';
-// import 'package:aayapath/features/entry/presentation/widgets/onboarding_bottom_nav.dart';
 import 'package:aayapath/features/entry/presentation/widgets/steps/finalize_step.dart';
-// import 'package:aayapath/features/entry/presentation/widgets/steps/goals_step.dart';
 import 'package:aayapath/features/entry/presentation/widgets/steps/identity_step.dart';
 import 'package:aayapath/features/entry/presentation/widgets/steps/income_step.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +13,7 @@ class OnBoardingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => OnboardingBloc(),
+      create: (_) => OnboardingBloc(AppPreferences()),
       child: const _OnBoardingView(),
     );
   }

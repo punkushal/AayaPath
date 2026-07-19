@@ -1,6 +1,7 @@
 import 'package:aayapath/core/routes/app_routes.dart';
 import 'package:aayapath/features/entry/presentation/pages/on_boarding_page.dart';
 import 'package:aayapath/features/entry/presentation/pages/splash_page.dart';
+import 'package:aayapath/features/home/presentation/pages/home_page.dart';
 import 'package:go_router/go_router.dart';
 
 final goRouter = GoRouter(
@@ -18,6 +19,13 @@ final goRouter = GoRouter(
       path: AppRoutePath.onboardingPath,
       name: AppRouteName.onboarding,
       builder: (context, state) => OnBoardingPage(),
+    ),
+
+    // home page
+    GoRoute(
+      path: AppRoutePath.homePath,
+      name: AppRouteName.home,
+      builder: (context, state) => HomePage(),
     ),
   ],
 );

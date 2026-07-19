@@ -1,14 +1,16 @@
+import 'package:aayapath/core/storage/app_preferences.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'onboarding_event.dart';
 part 'onboarding_state.dart';
 
-/// Drives the whole 4-step onboarding wizard (Identity, Income, Goals,
+/// Drives the whole 3-step onboarding wizard (Identity, Income,
 /// Finalize) with a single shared state so the step header, bottom nav and
 /// review step can all agree on progress and collected data.
 class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
-  OnboardingBloc() : super(const OnboardingState()) {
+  final AppPreferences preferences;
+  OnboardingBloc(this.preferences) : super(const OnboardingState()) {
     on<OnboardingNextRequested>(_onNextRequested);
     on<OnboardingBackRequested>(_onBackRequested);
     on<OnboardingStepTapped>(_onStepTapped);
@@ -78,5 +80,6 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
     emit(state.copyWith(status: OnboardingStatus.submitting));
     await Future<void>.delayed(const Duration(milliseconds: 900));
     emit(state.copyWith(status: OnboardingStatus.complete));
+    await preferences.setOnboardingCompleted(true);
   }
 }
