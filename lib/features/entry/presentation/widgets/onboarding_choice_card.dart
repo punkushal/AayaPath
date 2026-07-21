@@ -30,14 +30,16 @@ class OnboardingChoiceCard extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
-        padding: EdgeInsets.symmetric(vertical: 18.h, horizontal: 12.w),
+        padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 12.w),
         decoration: BoxDecoration(
           color: selected
               ? colors.primary.withValues(alpha: 0.08)
               : colors.surface,
           borderRadius: BorderRadius.circular(18.r),
           border: Border.all(
-            color: selected ? colors.primary : (extra?.border ?? Theme.of(context).dividerColor),
+            color: selected
+                ? colors.primary
+                : (extra?.border ?? Theme.of(context).dividerColor),
             width: selected ? 1.5 : 1,
           ),
         ),
