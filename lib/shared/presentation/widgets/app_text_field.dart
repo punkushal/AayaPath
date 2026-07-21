@@ -1,6 +1,7 @@
 import 'package:aayapath/core/extension/responsive_extension.dart';
 import 'package:aayapath/core/theme/app_typograhpy.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// Reusable text input. Wraps [TextFormField] so every screen picks up the
 /// styling already defined in [AppTheme]'s `inputDecorationTheme`, and adds
@@ -19,6 +20,7 @@ class AppTextField extends StatefulWidget {
     this.keyboardType,
     this.textInputAction,
     this.prefixIcon,
+    this.prefixText,
     this.suffixIcon,
     this.validator,
     this.onChanged,
@@ -28,6 +30,8 @@ class AppTextField extends StatefulWidget {
     this.autofocus = false,
     this.focusNode,
     this.autovalidateMode,
+    this.inputFormatters,
+    this.style,
   });
 
   final TextEditingController? controller;
@@ -41,6 +45,9 @@ class AppTextField extends StatefulWidget {
   final TextInputAction? textInputAction;
   final IconData? prefixIcon;
 
+  /// Ignored when [prefixIcon] is set — only one prefix is shown.
+  final String? prefixText;
+
   /// Ignored when [obscureText] is true — the field shows its own
   /// show/hide-password toggle in that case instead.
   final Widget? suffixIcon;
@@ -52,6 +59,8 @@ class AppTextField extends StatefulWidget {
   final bool autofocus;
   final FocusNode? focusNode;
   final AutovalidateMode? autovalidateMode;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextStyle? style;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -91,15 +100,16 @@ class _AppTextFieldState extends State<AppTextField> {
           textInputAction: widget.textInputAction,
           validator: widget.validator,
           autovalidateMode: widget.autovalidateMode,
+          inputFormatters: widget.inputFormatters,
           onChanged: widget.onChanged,
           onFieldSubmitted: widget.onSubmitted,
           enabled: widget.enabled,
           maxLines: widget.obscureText ? 1 : widget.maxLines,
           autofocus: widget.autofocus,
           focusNode: widget.focusNode,
-          style: AppTypography.bodyMedium.copyWith(
-            color: colorScheme.onSurface,
-          ),
+          style:
+              widget.style ??
+              AppTypography.bodyMedium.copyWith(color: colorScheme.onSurface),
           decoration: InputDecoration(
             hintText: widget.hintText,
             errorText: widget.errorText,
@@ -107,6 +117,10 @@ class _AppTextFieldState extends State<AppTextField> {
             prefixIcon: widget.prefixIcon == null
                 ? null
                 : Icon(widget.prefixIcon, size: 20.r),
+            prefixText: widget.prefixIcon == null ? widget.prefixText : null,
+            prefixStyle:
+                widget.style ??
+                AppTypography.bodyMedium.copyWith(color: colorScheme.onSurface),
             suffixIcon: widget.obscureText
                 ? IconButton(
                     icon: Icon(

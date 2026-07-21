@@ -6,7 +6,9 @@ import 'package:aayapath/features/entry/presentation/bloc/onboarding_bloc.dart';
 import 'package:aayapath/features/entry/presentation/widgets/onboarding_choice_card.dart';
 import 'package:aayapath/features/entry/presentation/widgets/onboarding_step_header.dart';
 import 'package:aayapath/shared/presentation/widgets/app_button.dart';
+import 'package:aayapath/shared/presentation/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 const sourceIcons = {
@@ -95,31 +97,10 @@ class IncomeStep extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     10.vGap,
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 14.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: extra?.surfaceElevated,
-                        borderRadius: BorderRadius.circular(16.r),
-                      ),
-                      child: Row(
-                        children: [
-                          Text(
-                            'Rs.',
-                            style: AppTypography.titleMedium.copyWith(
-                              color: extra?.textMuted,
-                            ),
-                          ),
-                          8.hGap,
-                          Text(
-                            state.monthlyIncome.round().toString(),
-                            style: Theme.of(context).textTheme.headlineMedium,
-                          ),
-                        ],
-                      ),
+                    _MonthlyIncomeInput(
+                      value: state.monthlyIncome,
+                      onChanged: (v) =>
+                          bloc.add(OnboardingMonthlyIncomeChanged(v)),
                     ),
                     SliderTheme(
                       data: SliderTheme.of(context).copyWith(
@@ -134,6 +115,7 @@ class IncomeStep extends StatelessWidget {
                       child: Slider(
                         min: 5000,
                         max: 1000000,
+                        divisions: 995,
                         value: state.monthlyIncome.clamp(5000, 1000000),
                         onChanged: (v) =>
                             bloc.add(OnboardingMonthlyIncomeChanged(v)),
@@ -174,6 +156,67 @@ class IncomeStep extends StatelessWidget {
   if (score >= 60) return ('Good Stability', 20);
   if (score >= 40) return ('Moderate Stability', 15);
   return ('Building Stability', 10);
+}
+
+class _MonthlyIncomeInput extends StatefulWidget {
+  const _MonthlyIncomeInput({required this.value, required this.onChanged});
+
+  final double value;
+  final ValueChanged<double> onChanged;
+
+  @override
+  State<_MonthlyIncomeInput> createState() => _MonthlyIncomeInputState();
+}
+
+class _MonthlyIncomeInputState extends State<_MonthlyIncomeInput> {
+  late final TextEditingController _controller;
+  late final FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(
+      text: widget.value.round().toString(),
+    );
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void didUpdateWidget(covariant _MonthlyIncomeInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Keep the field in sync when the slider (not this field) drives the
+    // value change — but don't fight the user while they're mid-typing.
+    if (_focusNode.hasFocus) return;
+    final displayed = widget.value.round().toString();
+    if (_controller.text != displayed) _controller.text = displayed;
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleChanged(String text) {
+    final parsed = double.tryParse(text);
+    if (parsed == null) return;
+    widget.onChanged(parsed.clamp(0, 1000000));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AppTextField(
+      controller: _controller,
+      focusNode: _focusNode,
+      keyboardType: TextInputType.number,
+      textInputAction: TextInputAction.done,
+      prefixText: 'Rs. ',
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      style: Theme.of(context).textTheme.headlineMedium,
+      onChanged: _handleChanged,
+    );
+  }
 }
 
 class _MinMaxLabel extends StatelessWidget {
